@@ -1,57 +1,71 @@
 #include <stdio.h>
 #include <stdlib.h>
-#define MAX 5  
-int stack[MAX];
+
+int *stack = NULL;
+int capacity = 0;
 int top = -1;
 
-void push(int element) {
-    if (top == MAX - 1) {
-        printf("Stack overflow! Cannot insert %d\n", element);
-    } else {
-        stack[++top] = element;
-        printf("%d pushed to stack.\n", element);
-    }
-}
-
-void pop() {
-    if (top == -1) {
-        printf("Stack underflow! No element to delete.\n");
-    } else {
-        printf("%d popped from stack.\n", stack[top]);
-        top--;
-    }
-}
-
-void display() {
-    if (top == -1) {
-        printf("Stack is empty.\n");
-    } else {
-        printf("Stack: ");
-        for (int i = top; i >= 0; i--) {
-            printf("%d ", stack[i]);
-        }
-        printf("\n");
-    }
-}
-
-int peek() {
-    if (top == -1) {
-        printf("Stack is empty.\n");
-        return -1; 
-    }
-    return stack[top];
-}
-
-int isEmpty() {
+int is_empty() {
     return top == -1;
 }
 
-int isFull() {
-    return top == MAX - 1;
+int is_full() {
+    return top == capacity - 1;
+}
+
+void push(int value) {
+    if (is_full()) {
+        printf("Stack overflow!\n");
+        return;
+    }
+    stack[++top] = value;
+    printf("%d pushed to stack.\n", value);
+}
+
+void pop() {
+    if (is_empty()) {
+        printf("Stack underflow!\n");
+        return;
+    }
+    printf("%d popped from stack.\n", stack[top--]);
+}
+
+void display() {
+    if (is_empty()) {
+        printf("Stack is empty.\n");
+        return;
+    }
+
+    printf("Stack (top -> bottom): ");
+    for (int i = top; i >= 0; i--) {
+        printf("%d ", stack[i]);
+    }
+    printf("\n");
+}
+
+void peek() {
+    if (is_empty()) {
+        printf("Stack is empty.\n");
+        return;
+    }
+    printf("Top element: %d\n", stack[top]);
 }
 
 int main() {
-    int choice, value;
+    int choice;
+    int value;
+
+    printf("Enter stack size: ");
+    if (scanf("%d", &capacity) != 1 || capacity <= 0) {
+        printf("Invalid stack size.\n");
+        return 1;
+    }
+
+    stack = (int *)malloc(sizeof(int) * capacity);
+    if (stack == NULL) {
+        printf("Memory allocation failed.\n");
+        return 1;
+    }
 
     while (1) {
         printf("\n--- Stack Menu ---\n");
@@ -61,40 +75,36 @@ int main() {
         printf("4. Peek (Top)\n");
         printf("5. Exit\n");
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+
+        if (scanf("%d", &choice) != 1) {
+            printf("Invalid input! Try again.\n");
+            return 1;
+        }
 
         switch (choice) {
             case 1:
-                if (isFull()) {
-                    printf("Stack is full!\n");
-                } else {
-                    printf("Enter value to push: ");
-                    scanf("%d", &value);
-                    push(value);
+                printf("Enter value to push: ");
+                if (scanf("%d", &value) != 1) {
+                    printf("Invalid input!\n");
+                    return 1;
                 }
+                push(value);
                 break;
             case 2:
-                if (isEmpty()) {
-                    printf("Stack is empty!\n");
-                } else {
-                    pop();
-                }
+                pop();
                 break;
             case 3:
                 display();
                 break;
             case 4:
-                if (!isEmpty()) {
-                    printf("Top element: %d\n", peek());
-                }
+                peek();
                 break;
             case 5:
+                free(stack);
                 printf("Exiting...\n");
                 exit(0);
             default:
                 printf("Invalid choice! Try again.\n");
         }
     }
-
-    return 0;
 }
