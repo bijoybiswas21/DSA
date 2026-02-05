@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Define node structure
 struct Node {
     int data;
     struct Node* next;
@@ -12,13 +11,12 @@ struct Node* insertAtFirst(struct Node* head, int value) {
     struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
 
     newNode->data = value;
-    newNode->next = head;   // Link new node to old head
-    head = newNode;         // Update head
+    newNode->next = head;  
+    head = newNode;         
 
     return head;
 }
 
-// Display linked list
 void display(struct Node* head) {
     struct Node* temp = head;
     while (temp != NULL) {
